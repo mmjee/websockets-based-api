@@ -6,7 +6,7 @@
   "license": "Unlicense",
   "private": false,
   "dependencies": {
-    "@root/greenlock-express": "git+https://git.maharshi.ninja/root/greenlock-express.js.git#82aaf74e0dd62495007d5f42eb0e4087d107ebd6",
+    "@root/greenlock-express": "https://git.maharshi.ninja/root/greenlock-express.js/archive/82aaf74e0dd62495007d5f42eb0e4087d107ebd6.tar.gz",
     "fastify": "^3.20.2"
   },
   "devDependencies": {

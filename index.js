@@ -1,5 +1,5 @@
 const Fastify = require('fastify')
-const initialize = require('schl/app')
+const initialize = require('wba/app')
 
 // require("greenlock-express")
 require('@root/greenlock-express')
