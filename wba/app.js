@@ -145,7 +145,7 @@ class Connection {
 
 module.exports = async (fastify) => {
   fastify.register(fastifyWebsockets)
-  fastify.get('/', { websocket: true }, (connection /* SocketStream */, req /* FastifyRequest */) => {
+  fastify.get('/', { websocket: true }, (connection) => {
     const c = new Connection(connection)
     c.initialize().catch(e => c.onClose(e))
   })
