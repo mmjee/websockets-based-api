@@ -1,8 +1,9 @@
-const { promisify } = require('util')
+const { promisify, inspect } = require('util')
 const crypto = require('crypto')
 
 const fastifyWebsockets = require('fastify-websocket')
 const msgpackr = require('msgpackr')
+const toJSON = require('object-tojson')
 const libbetterauth = require('libbetterauth')
 
 const { User, initialize } = require('wba/models')
@@ -35,7 +36,7 @@ class Connection {
 
     this.onMessage = this.onMessage.bind(this)
     this.onClose = this.onClose.bind(this)
-    this.wsSend = promisify(this.ws.socket.send.bind(this.ws.socket))
+    this.wsSend = promisify(this.ws.send.bind(this.ws))
 
     this.ws.on('message', this.onMessage)
     this.ws.on('close', this.onClose)
@@ -86,6 +87,8 @@ class Connection {
       return
     }
 
+    console.log('Received message:', inspect(data))
+
     if (!data.type && !Number.isFinite(data.type)) {
       await this.simpleSend({
         type: MESSAGE_TYPES.SERVER_ERROR,
@@ -124,12 +127,19 @@ class Connection {
     }
   }
 
+  async onClose () {
+    console.log('Connection closed')
+  }
+
   async handleAuthentication (msg) {
     const {
       userID,
+      timestamp,
       signature
     } = msg
-    const user = await User.findById(userID)
+    const user = await User.findOne({
+      email: userID
+    })
 
     if (!user) {
       await this.simpleSend({
@@ -139,11 +149,14 @@ class Connection {
       return
     }
 
-    const validated = libbetterauth.verifyData(this.authChallengeBuf, signature, user.publicKey)
+    const validated = libbetterauth.verifyData({
+      buf: this.authChallengeBuf,
+      timestamp
+    }, signature, user.publicKey)
     if (!validated) {
       await this.simpleSend({
         type: MESSAGE_TYPES.SERVER_AUTHENTICATION_SUCCESS,
-        user
+        user: toJSON(user)
       })
       return
     }
@@ -158,7 +171,7 @@ module.exports = async (fastify) => {
 
   fastify.register(fastifyWebsockets)
   fastify.get('/api/v1/connection', { websocket: true }, (connection) => {
-    const c = new Connection(connection)
+    const c = new Connection(connection.socket)
     c.initialize().catch(e => c.onClose(e))
   })
 }

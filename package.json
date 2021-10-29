@@ -5,6 +5,9 @@
   "repository": "https://github.com/mmjee/simple-container-https-le.git",
   "license": "Unlicense",
   "private": false,
+  "scripts": {
+    "dev": "NODE_PATH=. nodemon dev.js"
+  },
   "dependencies": {
     "@root/greenlock-express": "https://git.maharshi.ninja/root/greenlock-express.js/archive/82aaf74e0dd62495007d5f42eb0e4087d107ebd6.tar.gz",
     "bufferutil": "^4.0.5",
@@ -13,6 +16,7 @@
     "libbetterauth": "https://git.maharshi.ninja/root/libbetterauth/archive/ac64c49945265509fff118fa307e9c7b47f47654.tar.gz",
     "mongoose": "^6.0.12",
     "msgpackr": "^1.4.7",
+    "object-tojson": "^3.0.0",
     "utf-8-validate": "^5.0.7"
   },
   "devDependencies": {
@@ -20,6 +24,7 @@
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0"
+    "eslint-plugin-promise": "^5.1.0",
+    "nodemon": "^2.0.14"
   }
 }
