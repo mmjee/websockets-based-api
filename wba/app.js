@@ -37,7 +37,6 @@ class Connection {
 
     this.onMessage = this.onMessage.bind(this)
     this.onClose = this.onClose.bind(this)
-    this.wsSend = promisify(this.ws.send.bind(this.ws))
 
     this.ws.on('message', this.onMessage)
     this.ws.on('close', this.onClose)
@@ -48,7 +47,7 @@ class Connection {
 
   simpleSend (data) {
     return new Promise((resolve, reject) => {
-      this.wsSend(msgpackr.encode(data), {
+      this.ws.send(msgpackr.encode(data), {
         binary: true
       }, (err, data) => {
         if (err) {
