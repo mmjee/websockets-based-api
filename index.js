@@ -15,6 +15,7 @@ require('@root/greenlock-express')
 // One of the worst and the unholiest marriages of all time
 // This is so bad that I cried for 24 hours straight after I witnessed this crime happen
 async function httpsWorker (glx) {
+  // noinspection JSCheckFunctionSignatures
   const fastify = Fastify({
     logger: true,
     serverFactory (handler) {

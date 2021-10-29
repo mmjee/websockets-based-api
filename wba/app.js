@@ -5,6 +5,8 @@ const fastifyWebsockets = require('fastify-websocket')
 const msgpackr = require('msgpackr')
 const libbetterauth = require('libbetterauth')
 
+const { User, initialize } = require('wba/models')
+
 // Hopefully you'll keep this in its own file
 const ERRORS = {
   INVALID_DATA: 1,
@@ -43,8 +45,16 @@ class Connection {
   }
 
   simpleSend (data) {
-    return this.wsSend(msgpackr.encode(data), {
-      binary: true
+    return new Promise((resolve, reject) => {
+      this.wsSend(msgpackr.encode(data), {
+        binary: true
+      }, (err, data) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
     })
   }
 
@@ -95,7 +105,7 @@ class Connection {
           })
         }
       } else {
-        this.simpleSend({
+        await this.simpleSend({
           type: MESSAGE_TYPES.SERVER_ERROR,
           errorCode: ERRORS.INVALID_DATA
         })
@@ -106,7 +116,7 @@ class Connection {
     // Only handle CSEs
     switch (data.type) {
       case MESSAGE_TYPES.CLIENT_AUTHENTICATION_CHALLENGE_RESP:
-        this.simpleSend({
+        await this.simpleSend({
           type: MESSAGE_TYPES.SERVER_ERROR,
           errorCode: ERRORS.ALREADY_AUTHENTICATED
         })
@@ -122,7 +132,7 @@ class Connection {
     const user = await User.findById(userID)
 
     if (!user) {
-      this.simpleSend({
+      await this.simpleSend({
         type: MESSAGE_TYPES.SERVER_AUTHENTICATION_FAILURE,
         message: 'User not found'
       })
@@ -131,7 +141,7 @@ class Connection {
 
     const validated = libbetterauth.verifyData(this.authChallengeBuf, signature, user.publicKey)
     if (!validated) {
-      this.simpleSend({
+      await this.simpleSend({
         type: MESSAGE_TYPES.SERVER_AUTHENTICATION_SUCCESS,
         user
       })
@@ -144,8 +154,10 @@ class Connection {
 }
 
 module.exports = async (fastify) => {
+  await initialize()
+
   fastify.register(fastifyWebsockets)
-  fastify.get('/', { websocket: true }, (connection) => {
+  fastify.get('/api/v1/connection', { websocket: true }, (connection) => {
     const c = new Connection(connection)
     c.initialize().catch(e => c.onClose(e))
   })
