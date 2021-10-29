@@ -25,6 +25,7 @@ const MESSAGE_TYPES = {
   SERVER_AUTHENTICATION_FAILURE: 0x0013,
 
   // Client-sent events
+  // 0x800X - Authentication
   CLIENT_AUTHENTICATION_CHALLENGE_RESP: 0x8000
 }
 
