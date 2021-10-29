@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 exports.User = mongoose.model('User', new mongoose.Schema({
-  email: { type: String, required: true, index: 'unique' },
+  email: { type: String, required: true, unique: true },
   publicKey: { type: Buffer, minlength: 32, maxlength: 32, required: true }
 }))
 
