@@ -149,18 +149,22 @@ class Connection {
       return
     }
 
-    const validated = libbetterauth.verifyData({
+    const verificationSuccess = libbetterauth.verifyData({
       buf: this.authChallengeBuf,
       timestamp
     }, signature, user.publicKey)
-    if (!validated) {
+    if (!verificationSuccess) {
       await this.simpleSend({
-        type: MESSAGE_TYPES.SERVER_AUTHENTICATION_SUCCESS,
-        user: toJSON(user)
+        type: MESSAGE_TYPES.SERVER_AUTHENTICATION_FAILURE,
+        error: 'Verification failed.'
       })
       return
     }
 
+    await this.simpleSend({
+      type: MESSAGE_TYPES.SERVER_AUTHENTICATION_SUCCESS,
+      user: toJSON(user)
+    })
     this.isAuthenticated = true
     this.userID = userID
   }
