@@ -23,10 +23,14 @@ async function httpsWorker (glx) {
       return glx.http2Server(tlsOptions, handler)
     }
   })
+  let port = Number(process.env.HTTP_PORT)
+  if (!Number.isFinite(port)) {
+    port = 443
+  }
 
   await initialize(fastify)
 
-  await fastify.listen(443, '::').catch(e => console.error(e))
+  await fastify.listen(port, '::').catch(e => console.error(e))
 
   // Listening to 80 to solve HTTP-01 challenges and redirecting clueless people to HTTPS
   const httpServer = glx.httpServer()

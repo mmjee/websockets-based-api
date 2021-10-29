@@ -6,7 +6,7 @@ services:
       context: .
     environment:
       - LE_MAINTAINER_EMAIL=your@email
-    # UNCOMMENT EITHER OF THESE
+    # UNCOMMENT 443 IF YOU WANT IPV4 CONNECTIVITY, AND CHANGE PORT BY USING THE 'HTTP_PORT' ENVIRONMENT VARIABLE
     # ports:
     #  - 80:80
     #  - 443:443
