@@ -1,11 +1,21 @@
 version: "2"
 
 services:
+  mongodb:
+    image: 'bitnami/mongodb:latest'
+    environment:
+      - MONGODB_ENABLE_IPV6=yes
+      # Randomly generated, change this
+      - MONGODB_ROOT_PASSWORD=SX59rzcgthEBqPvUuz6WjEHj
+    volumes:
+      - ./data/mongodb:/bitnami
+
   backend:
     build:
       context: .
     environment:
       - LE_MAINTAINER_EMAIL=your@email
+      - WBA_MONGODB_URL=mongodb://root:SX59rzcgthEBqPvUuz6WjEHj@mongodb/wba
     # UNCOMMENT 443 IF YOU WANT IPV4 CONNECTIVITY, AND CHANGE PORT BY USING THE 'HTTP_PORT' ENVIRONMENT VARIABLE
     # ports:
     #  - 80:80
